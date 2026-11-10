@@ -4,7 +4,7 @@ Instruções para agentes de IA que trabalham neste repositório. Valem para qua
 
 ## O projeto
 
-Preencha ao criar o projeto:
+Preencha ao criar o projeto. Enquanto algum campo abaixo tiver `<…>`, o projeto ainda não foi configurado: siga o `docs/agents/configurar.md` antes de qualquer card.
 
 - **Dono:** <quem lê e mescla os PRs>. Neste arquivo, "o dono".
 - **Prefixo dos cards:** `<XX>`, como em `XX-12`. O branch do card fica `xx-12-descricao`.

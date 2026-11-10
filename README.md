@@ -26,9 +26,13 @@ Peças opcionais ficam em `stacks/<nome>/`, cada uma com um README que diz o que
 
 ## Ao criar um projeto a partir da base
 
-1. Preencha os campos `<…>` do `AGENTS.md`, deste README, do `GLOSSARY.md` e do `docs/briefing.md`.
-2. Ative os git hooks: `git config core.hooksPath .githooks`.
-3. Se usar uma stack ou um quadro, siga o README dela em `stacks/`.
-4. Apague o `INVENTARIO.md` e o `CANDIDATOS.md`, que são da base, não do projeto.
+No Claude Code, rode `/configurar-projeto`. Com outro agente, peça para ele seguir o `docs/agents/configurar.md`. O roteiro:
+
+- pergunta o que falta;
+- preenche os campos `<…>`;
+- ativa os hooks;
+- cria as etiquetas;
+- aplica a stack e o quadro;
+- abre o PR de configuração.
 
 Os hooks pedem `python3`, e o fluxo do card pede o `gh` autenticado.
