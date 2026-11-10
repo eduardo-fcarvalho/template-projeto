@@ -26,13 +26,19 @@ Peças opcionais ficam em `stacks/<nome>/`, cada uma com um README que diz o que
 
 ## Ao criar um projeto a partir da base
 
-No Claude Code, rode `/configurar-projeto`. Com outro agente, peça para ele seguir o `docs/agents/configurar.md`. O roteiro:
+**Antes, uma vez por conta do GitHub:** em Settings → Emails, ligue "Keep my email addresses private" e "Block command line pushes that expose my email". Configure o git com o e-mail `noreply` que aparece nessa página (`git config --global user.email ID+usuario@users.noreply.github.com`). Assim, o e-mail pessoal não vai para os commits.
 
-- pergunta o que falta;
-- preenche os campos `<…>`;
-- ativa os hooks;
-- cria as etiquetas;
-- aplica a stack e o quadro;
-- abre o PR de configuração.
+1. **Crie o repositório:** use o botão "Use this template" no GitHub, ou rode `gh repo create <nome> --template <dono>/template-projeto --private --clone`. O projeto novo começa com um histórico novo.
+2. **Configure:** no Claude Code, rode `/configurar-projeto`. Com outro agente, peça para ele seguir o `docs/agents/configurar.md`. O roteiro:
+   - pergunta o que falta;
+   - preenche os campos `<…>`;
+   - ativa os hooks;
+   - cria as etiquetas;
+   - aplica a stack e o quadro;
+   - abre o PR de configuração;
+   - oferece a proteção da `main`.
+3. **Mescle o PR de configuração.**
+
+O template copia os arquivos, mas não as configurações do repositório: as etiquetas e a proteção da `main` são criadas pelo roteiro.
 
 Os hooks pedem `python3`, e o fluxo do card pede o `gh` autenticado.
