@@ -1,0 +1,26 @@
+# Segredos e configuração local: nunca versionar (G4)
+.env
+.env.*
+!.env.example
+
+# Dados pessoais fora do Git (G2)
+*.csv
+*.xlsx
+*.xls
+*.ods
+
+# IDEs e sistema
+.idea/
+*.iml
+.vscode/
+*.swp
+.DS_Store
+
+# Logs
+*.log
+
+# Bytecode do Python (os testes dos guardrails o geram)
+__pycache__/
+
+# Configuração pessoal do Claude Code
+.claude/settings.local.json
