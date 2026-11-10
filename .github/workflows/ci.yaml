@@ -1,0 +1,41 @@
+# Testa cada mudança. O núcleo traz só o job dos guardrails; cada stack em stacks/ traz os jobs dela.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Um push novo no mesmo PR cancela a execução anterior, que já ficou velha.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # A lógica dos git hooks e do hook do Claude Code: casos que passam e que devem ser
+  # barrados, com e sem agent_type. O Python do runner basta: os testes só usam a stdlib.
+  guardrails:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # fetch-depth 0: as conferências do PR comparam com a origin/main, que um clone raso não tem.
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Testes dos guardrails
+        run: python3 -m unittest discover -v -s scripts/guardrails
+
+      # Falham: segredo, planilha, migração aplicada (com stack) e restart: no compose.
+      # Só avisam: dependência, caminho de guardrail e rotina do card.
+      # Os nomes passam por env, não por ${{ }} no script: um nome de branch não vira comando.
+      - name: Conferências do PR
+        if: github.event_name == 'pull_request'
+        run: python3 scripts/guardrails/guardrails.py pr "origin/$BASE" "$BRANCH"
+        env:
+          BASE: ${{ github.base_ref }}
+          BRANCH: ${{ github.head_ref }}
