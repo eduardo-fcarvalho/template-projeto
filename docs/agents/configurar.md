@@ -87,3 +87,18 @@ Rode os testes dos guardrails de novo. Abra o PR com o template do repositório.
 Mande o link ao dono.
 
 **Pronto quando:** o PR está aberto, o job `guardrails` do CI terminou verde e o dono tem o link.
+
+## 8. Proteção da `main`
+
+O template não copia as configurações do repositório. Ofereça ao dono proteger a `main` no GitHub: exigir PR e o job `guardrails` verde, sem aprovação obrigatória, porque ninguém aprova o próprio PR. Pergunte também se a regra vale para ele. Aplique só com o sim dele:
+
+```
+gh api -X PUT repos/{owner}/{repo}/branches/main/protection \
+  -F 'required_status_checks[strict]=false' -f 'required_status_checks[contexts][]=guardrails' \
+  -F enforce_admins=true -F 'required_pull_request_reviews[required_approving_review_count]=0' \
+  -F restrictions=null -F allow_force_pushes=false -F allow_deletions=false
+```
+
+Se a regra não vale para o dono, use `enforce_admins=false`. Num repositório privado no plano Free, a API responde 403: diga ao dono que a proteção pede repositório público ou plano pago e que, até lá, o G1 fica só com os hooks.
+
+**Pronto quando:** `gh api repos/{owner}/{repo}/branches/main/protection` mostra o check `guardrails` e o PR obrigatório, ou o dono foi avisado do 403, ou ele recusou.
