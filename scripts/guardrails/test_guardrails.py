@@ -173,8 +173,8 @@ class ComandoPorSubagente(unittest.TestCase):
             ["gh issue view 6", "gh pr merge 1", "gh pr list; ls"],
         ),
         "revisor-card": (
-            ["git log --oneline main..HEAD", "git diff main...HEAD", "git show HEAD", "gh issue view 6"],
-            ["git push", "git commit -m x", "gh issue list", "git diff | tee x", "grep -rn x docs/adr"],
+            ["git log --oneline main..HEAD", "git diff main...HEAD", "git show HEAD", "gh issue view 6", "gh issue list --search 'XX-03 in:title' --json number"],
+            ["git push", "git commit -m x", "gh issue close 3", "git diff | tee x", "grep -rn x docs/adr"],
         ),
         "revisor-regras": (
             ["git log main..HEAD", "git diff main", "git show HEAD:README.md", "gh issue view 6"],

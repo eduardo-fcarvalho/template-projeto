@@ -41,7 +41,7 @@ SEGREDO = re.compile(r"(^|[/\s'\"=:])(\.env(?!\.example\b)(\.[\w.-]+)?|\.ssh)(/|
 SO = {
     "po": [["gh", "issue", "list"], ["gh", "issue", "view"]],
     "quadro": [["gh", "issue", "list"], ["gh", "pr", "list"]],
-    "revisor-card": [["git", "log"], ["git", "diff"], ["git", "show"], ["gh", "issue", "view"]],
+    "revisor-card": [["git", "log"], ["git", "diff"], ["git", "show"], ["gh", "issue", "list"], ["gh", "issue", "view"]],
     "revisor-regras": [["git", "log"], ["git", "diff"], ["git", "show"], ["gh", "issue", "view"]],
 }
 SUBSTITUICAO = re.compile(r"`|\$\(")
