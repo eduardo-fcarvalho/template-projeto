@@ -1,0 +1,69 @@
+# Jobs da stack Spring (API) + React (SPA com tipos gerados do contrato OpenAPI).
+# Cole sob `jobs:` em .github/workflows/ci.yaml. Supõe backend/, frontend/ e contrato/openapi.json.
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: maven
+
+      # O Testcontainers usa o Docker que já vem no runner.
+      - name: Testes e regras de arquitetura
+        run: ./mvnw -B verify
+
+      # O ContratoDaApiTest regrava contrato/openapi.json. Se ele mudou, a API mudou sem o contrato.
+      - name: Contrato commitado em dia
+        run: |
+          if [ -n "$(git status --porcelain -- ../contrato)" ]; then
+            echo "::error::O contrato mudou: rode ./mvnw verify no backend e commite contrato/openapi.json."
+            git diff -- ../contrato
+            exit 1
+          fi
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: frontend/.nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      # Gera os tipos a partir do contrato commitado. O job do backend garante que o contrato bate
+      # com o código, e este passo garante que os tipos batem com o contrato.
+      - name: Tipos gerados em dia
+        run: |
+          npm run gerar-tipos
+          if [ -n "$(git status --porcelain -- src/api/esquema.d.ts)" ]; then
+            echo "::error::Os tipos estão velhos: rode npm run gerar-tipos e commite src/api/esquema.d.ts."
+            git diff -- src/api/esquema.d.ts
+            exit 1
+          fi
+
+      - run: npm run lint
+
+      # O build roda o tsc -b antes do Vite, então também é a checagem de tipos.
+      - name: Checagem de tipos e build
+        run: npm run build
+
