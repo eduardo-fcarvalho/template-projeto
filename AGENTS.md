@@ -80,14 +80,27 @@ Valem para todo card e não se repetem nos cards. Os hooks e o CI garantem a mai
 
 ## Subagentes
 
-As instruções de cada papel ficam em `docs/agents/`. No Claude Code, elas viram subagentes em `.claude/agents/`, e o hook limita o que cada um roda no Bash.
+As instruções de cada papel ficam em `docs/agents/<papel>.md`. A tabela diz quando chamar cada um e de que faixa de modelo ele precisa.
 
-| Papel | Quando |
-|---|---|
-| `po` | Antes de cada fatia, para rascunhar o Goal e o Done when; no planejamento da fatia; no G11 |
-| `quadro` | Nos momentos do fluxo acima, em segundo plano, só se houver quadro |
-| `implementador` | Um passo de código por vez, menos nos cards sensíveis |
-| `revisor-card` e `revisor-regras` | Antes de todo PR (passo 5) |
+| Papel | Quando | Modelo | Por quê |
+|---|---|---|---|
+| `po` | Antes de cada fatia, para rascunhar o Goal e o Done when; no planejamento da fatia; no G11 | o da sessão | Julgamento de produto, com poucas chamadas: não compensa economizar |
+| `quadro` | Nos momentos do fluxo acima, em segundo plano, só se houver quadro | rápido | Tarefa mecânica com regras fixas. Um erro se corrige na rodada seguinte, porque a reconciliação relê tudo |
+| `implementador` | Um passo de código por vez, menos nos cards sensíveis | intermediário | Concentra o volume de tokens (compilar, testar, corrigir), e o agente principal confere o resultado |
+| `revisor-card` e `revisor-regras` | Antes de todo PR (passo 5) | intermediário | Leem o diff inteiro e comparam com o card e as regras. O dono e a revisão de código ainda leem depois |
+
+**Configurar os papéis numa ferramenta:** crie um agente por papel cuja instrução seja só "siga `docs/agents/<papel>.md`". Escolha o modelo da faixa e limite as ferramentas ao que o papel pede (os que só leem não editam arquivos). As faixas são:
+
+- **rápido:** o modelo mais barato e veloz da ferramenta;
+- **intermediário:** o de custo médio, bom em código;
+- **o da sessão:** o mesmo modelo do agente principal.
+
+| Ferramenta | Onde configurar | rápido | intermediário | o da sessão |
+|---|---|---|---|---|
+| Claude Code | `.claude/agents/<papel>.md`, campo `model` | `haiku` | `sonnet` | `inherit` |
+| <outra> | <arquivo ou tela> | <modelo> | <modelo> | <modelo> |
+
+Quando a família de modelos mudar, atualize só esta tabela e a configuração da ferramenta: a faixa e o motivo continuam. No Claude Code, o hook também limita o que cada papel roda no Bash. Em outra ferramenta, essa garantia fica só com os git hooks e o CI.
 
 Confira o relatório de quem implementa: o build, os testes e o diff, e se os testes que você escreveu continuam iguais.
 
